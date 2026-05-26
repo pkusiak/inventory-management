@@ -1,0 +1,257 @@
+[
+  {
+    "id": "RO-20260526114023-1",
+    "created_at": "2026-05-26T11:40:23",
+    "status": "Submitted",
+    "items": [
+      {
+        "sku": "PCB-002",
+        "name": "Dual Layer PCB Assembly",
+        "category": "Circuit Boards",
+        "quantity": 10,
+        "unit_cost": 29.99,
+        "line_total": 299.9,
+        "lead_time_days": 14
+      }
+    ],
+    "total_cost": 299.9,
+    "max_lead_time_days": 14,
+    "expected_delivery": "2026-06-09"
+  },
+  {
+    "id": "RO-20260526114127-2",
+    "created_at": "2026-05-26T11:41:27",
+    "status": "Submitted",
+    "items": [
+      {
+        "sku": "DRV-405",
+        "name": "H-Bridge Motor Driver",
+        "category": "Controllers",
+        "quantity": 432,
+        "unit_cost": 22.0,
+        "line_total": 9504.0,
+        "lead_time_days": 10
+      },
+      {
+        "sku": "PRS-203",
+        "name": "Pressure Sensor Module",
+        "category": "Sensors",
+        "quantity": 347,
+        "unit_cost": 12.75,
+        "line_total": 4424.25,
+        "lead_time_days": 7
+      },
+      {
+        "sku": "ULS-205",
+        "name": "Ultrasonic Distance Sensor",
+        "category": "Sensors",
+        "quantity": 317,
+        "unit_cost": 15.99,
+        "line_total": 5068.83,
+        "lead_time_days": 7
+      },
+      {
+        "sku": "DSP-403",
+        "name": "Digital Signal Processor",
+        "category": "Controllers",
+        "quantity": 231,
+        "unit_cost": 7.75,
+        "line_total": 1790.25,
+        "lead_time_days": 10
+      },
+      {
+        "sku": "PSU-502",
+        "name": "12V 5A Power Supply Module",
+        "category": "Power Supplies",
+        "quantity": 222,
+        "unit_cost": 22.5,
+        "line_total": 4995.0,
+        "lead_time_days": 10
+      },
+      {
+        "sku": "SPR-602",
+        "name": "Compression Spring",
+        "category": "Sensors",
+        "quantity": 221,
+        "unit_cost": 12.25,
+        "line_total": 2707.25,
+        "lead_time_days": 7
+      },
+      {
+        "sku": "MCU-401",
+        "name": "8-bit Microcontroller",
+        "category": "Controllers",
+        "quantity": 176,
+        "unit_cost": 8.25,
+        "line_total": 1452.0,
+        "lead_time_days": 10
+      },
+      {
+        "sku": "PCB-002",
+        "name": "Dual Layer PCB Assembly",
+        "category": "Circuit Boards",
+        "quantity": 112,
+        "unit_cost": 29.99,
+        "line_total": 3358.88,
+        "lead_time_days": 14
+      },
+      {
+        "sku": "SPR-601",
+        "name": "Coil Spring Heavy Duty",
+        "category": "Sensors",
+        "quantity": 96,
+        "unit_cost": 18.75,
+        "line_total": 1800.0,
+        "lead_time_days": 7
+      },
+      {
+        "sku": "LED-406",
+        "name": "LED Driver IC",
+        "category": "Controllers",
+        "quantity": 93,
+        "unit_cost": 32.75,
+        "line_total": 3045.75,
+        "lead_time_days": 10
+      },
+      {
+        "sku": "PCB-003",
+        "name": "Multi Layer PCB Assembly",
+        "category": "Circuit Boards",
+        "quantity": 43,
+        "unit_cost": 34.5,
+        "line_total": 1483.5,
+        "lead_time_days": 14
+      },
+      {
+        "sku": "TMP-201",
+        "name": "Temperature Sensor Module",
+        "category": "Sensors",
+        "quantity": 37,
+        "unit_cost": 89.5,
+        "line_total": 3311.5,
+        "lead_time_days": 7
+      },
+      {
+        "sku": "PSU-505",
+        "name": "48V DC Power Supply Unit",
+        "category": "Power Supplies",
+        "quantity": 35,
+        "unit_cost": 67.5,
+        "line_total": 2362.5,
+        "lead_time_days": 10
+      },
+      {
+        "sku": "PWM-404",
+        "name": "PWM Motor Controller",
+        "category": "Controllers",
+        "quantity": 47,
+        "unit_cost": 15.5,
+        "line_total": 728.5,
+        "lead_time_days": 10
+      },
+      {
+        "sku": "STP-304",
+        "name": "Stepper Motor NEMA 23",
+        "category": "Actuators",
+        "quantity": 28,
+        "unit_cost": 285.0,
+        "line_total": 7980.0,
+        "lead_time_days": 10
+      },
+      {
+        "sku": "PSU-508",
+        "name": "Battery Backup Power Supply",
+        "category": "Power Supplies",
+        "quantity": 28,
+        "unit_cost": 185.5,
+        "line_total": 5194.0,
+        "lead_time_days": 10
+      },
+      {
+        "sku": "PSU-507",
+        "name": "Adjustable Bench Power Supply",
+        "category": "Power Supplies",
+        "quantity": 27,
+        "unit_cost": 125.0,
+        "line_total": 3375.0,
+        "lead_time_days": 10
+      },
+      {
+        "sku": "SRV-302",
+        "name": "Standard Servo Motor",
+        "category": "Actuators",
+        "quantity": 11,
+        "unit_cost": 725.0,
+        "line_total": 7975.0,
+        "lead_time_days": 10
+      },
+      {
+        "sku": "STP-303",
+        "name": "Stepper Motor NEMA 17",
+        "category": "Actuators",
+        "quantity": 8,
+        "unit_cost": 325.0,
+        "line_total": 2600.0,
+        "lead_time_days": 10
+      },
+      {
+        "sku": "PSU-506",
+        "name": "USB-C PD 100W Power Supply",
+        "category": "Power Supplies",
+        "quantity": 3,
+        "unit_cost": 29.99,
+        "line_total": 89.97,
+        "lead_time_days": 10
+      },
+      {
+        "sku": "HMD-202",
+        "name": "Humidity Sensor Module",
+        "category": "Sensors",
+        "quantity": 2,
+        "unit_cost": 125.0,
+        "line_total": 250.0,
+        "lead_time_days": 7
+      },
+      {
+        "sku": "SRV-301",
+        "name": "Micro Servo Motor",
+        "category": "Actuators",
+        "quantity": 1,
+        "unit_cost": 445.0,
+        "line_total": 445.0,
+        "lead_time_days": 10
+      }
+    ],
+    "total_cost": 73941.18,
+    "max_lead_time_days": 14,
+    "expected_delivery": "2026-06-09"
+  },
+  {
+    "id": "RO-20260526114158-3",
+    "created_at": "2026-05-26T11:41:58",
+    "status": "Submitted",
+    "items": [
+      {
+        "sku": "DRV-405",
+        "name": "H-Bridge Motor Driver",
+        "category": "Controllers",
+        "quantity": 429,
+        "unit_cost": 22.0,
+        "line_total": 9438.0,
+        "lead_time_days": 10
+      },
+      {
+        "sku": "PRS-203",
+        "name": "Pressure Sensor Module",
+        "category": "Sensors",
+        "quantity": 44,
+        "unit_cost": 12.75,
+        "line_total": 561.0,
+        "lead_time_days": 7
+      }
+    ],
+    "total_cost": 9999.0,
+    "max_lead_time_days": 10,
+    "expected_delivery": "2026-06-05"
+  }
+]
