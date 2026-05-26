@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Architecture · Factory Inventory Management</title>
+<style>
+  :root {
+    --slate-900: #0f172a;
+    --slate-700: #334155;
+    --slate-500: #64748b;
+    --slate-300: #cbd5e1;
+    --slate-200: #e2e8f0;
+    --slate-100: #f1f5f9;
+    --slate-50:  #f8fafc;
+    --blue-600:  #2563eb;
+    --blue-500:  #3b82f6;
+    --blue-100:  #dbeafe;
+    --green-600: #16a34a;
+    --green-100: #dcfce7;
+    --amber-600: #d97706;
+    --amber-100: #fef3c7;
+    --violet-600:#7c3aed;
+    --violet-100:#ede9fe;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--slate-50);
+    color: var(--slate-900);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 48px 32px 80px; }
+
+  header { border-bottom: 1px solid var(--slate-200); padding-bottom: 28px; margin-bottom: 48px; }
+  header .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--slate-500);
+    margin-bottom: 8px;
+  }
+  header h1 { font-size: 32px; font-weight: 700; margin: 0 0 8px; letter-spacing: -0.02em; }
+  header p { color: var(--slate-500); margin: 0; max-width: 720px; }
+
+  h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 20px;
+    letter-spacing: -0.01em;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--slate-200);
+  }
+  h3 { font-size: 15px; font-weight: 600; margin: 0 0 10px; color: var(--slate-900); }
+
+  section { margin-bottom: 56px; }
+
+  /* Tech Stack */
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+  }
+  .stack-card {
+    background: white;
+    border: 1px solid var(--slate-200);
+    border-radius: 8px;
+    padding: 18px 18px 16px;
+  }
+  .stack-card .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--slate-500);
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .stack-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 6px 0;
+    font-size: 14px;
+  }
+  .stack-item + .stack-item { border-top: 1px dashed var(--slate-200); }
+  .stack-item .name { color: var(--slate-900); font-weight: 500; }
+  .stack-item .ver { color: var(--slate-500); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+
+  /* Architecture diagram */
+  .arch {
+    background: white;
+    border: 1px solid var(--slate-200);
+    border-radius: 8px;
+    padding: 32px;
+  }
+  .arch-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 0;
+  }
+  .arch-tier {
+    border: 1px solid var(--slate-200);
+    border-radius: 8px;
+    padding: 18px 20px;
+    background: var(--slate-50);
+    position: relative;
+  }
+  .arch-tier .tier-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--slate-500);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .arch-tier .tier-name { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+  .arch-tier .tier-meta { font-size: 13px; color: var(--slate-500); }
+
+  .tier-browser   { border-left: 3px solid var(--violet-600); }
+  .tier-frontend  { border-left: 3px solid var(--blue-600); }
+  .tier-backend   { border-left: 3px solid var(--green-600); }
+  .tier-data      { border-left: 3px solid var(--amber-600); }
+
+  .arrow {
+    text-align: center;
+    color: var(--slate-300);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 18px;
+    line-height: 1;
+    padding: 4px 0;
+    user-select: none;
+  }
+  .arrow .label {
+    display: inline-block;
+    background: white;
+    border: 1px solid var(--slate-200);
+    border-radius: 999px;
+    padding: 3px 12px;
+    font-size: 11px;
+    color: var(--slate-500);
+    margin: 4px 0;
+    letter-spacing: 0.04em;
+  }
+
+  .pill-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .pill {
+    background: white;
+    border: 1px solid var(--slate-200);
+    border-radius: 4px;
+    padding: 4px 10px;
+    font-size: 12px;
+    color: var(--slate-700);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  /* Data flow steps */
+  .flow {
+    counter-reset: step;
+    display: grid;
+    gap: 12px;
+  }
+  .flow-step {
+    background: white;
+    border: 1px solid var(--slate-200);
+    border-radius: 8px;
+    padding: 16px 20px 16px 64px;
+    position: relative;
+  }
+  .flow-step::before {
+    counter-increment: step;
+    content: counter(step);
+    position: absolute;
+    left: 20px;
+    top: 16px;
+    width: 28px;
+    height: 28px;
+    background: var(--slate-900);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .flow-step h3 { margin-bottom: 4px; }
+  .flow-step p { margin: 0; color: var(--slate-500); font-size: 14px; }
+  .flow-step code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    background: var(--slate-100);
+    color: var(--slate-900);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 12.5px;
+  }
+
+  /* Endpoints table */
+  .endpoints {
+    background: white;
+    border: 1px solid var(--slate-200);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 11px 16px; font-size: 13.5px; }
+  th {
+    background: var(--slate-100);
+    color: var(--slate-700);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    border-bottom: 1px solid var(--slate-200);
+  }
+  td { border-bottom: 1px solid var(--slate-100); }
+  tr:last-child td { border-bottom: none; }
+  td.method {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--green-600);
+    width: 60px;
+  }
+  td.path {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12.5px;
+    color: var(--slate-900);
+    width: 320px;
+  }
+  td.desc { color: var(--slate-500); }
+
+  /* Patterns */
+  .pattern-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .pattern {
+    background: white;
+    border: 1px solid var(--slate-200);
+    border-radius: 8px;
+    padding: 20px;
+  }
+  .pattern h3 { margin-bottom: 8px; }
+  .pattern p { margin: 0; color: var(--slate-500); font-size: 13.5px; }
+
+  footer {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--slate-200);
+    font-size: 12px;
+    color: var(--slate-500);
+    display: flex;
+    justify-content: space-between;
+  }
+  footer a { color: var(--blue-600); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="eyebrow">System Documentation</div>
+    <h1>Factory Inventory Management — Architecture</h1>
+    <p>Full-stack demo of an inventory, orders, and spending dashboard for a manufacturing operation. Vue 3 single-page app talking to a stateless FastAPI service backed by JSON fixtures — no database.</p>
+  </header>
+
+  <!-- TECH STACK -->
+  <section>
+    <h2>Tech Stack</h2>
+    <div class="stack-grid">
+
+      <div class="stack-card">
+        <div class="label">Frontend</div>
+        <div class="stack-item"><span class="name">Vue</span><span class="ver">3.4.21</span></div>
+        <div class="stack-item"><span class="name">Vue Router</span><span class="ver">4.3.0</span></div>
+        <div class="stack-item"><span class="name">Vite</span><span class="ver">5.2.0</span></div>
+        <div class="stack-item"><span class="name">Axios</span><span class="ver">1.6.7</span></div>
+        <div class="stack-item"><span class="name">Port</span><span class="ver">:3000</span></div>
+      </div>
+
+      <div class="stack-card">
+        <div class="label">Backend</div>
+        <div class="stack-item"><span class="name">FastAPI</span><span class="ver">≥ 0.110</span></div>
+        <div class="stack-item"><span class="name">Uvicorn</span><span class="ver">≥ 0.24</span></div>
+        <div class="stack-item"><span class="name">Pydantic</span><span class="ver">≥ 2.5</span></div>
+        <div class="stack-item"><span class="name">Python</span><span class="ver">3.11</span></div>
+        <div class="stack-item"><span class="name">Port</span><span class="ver">:8001</span></div>
+      </div>
+
+      <div class="stack-card">
+        <div class="label">Data Layer</div>
+        <div class="stack-item"><span class="name">Format</span><span class="ver">JSON</span></div>
+        <div class="stack-item"><span class="name">Storage</span><span class="ver">in-memory</span></div>
+        <div class="stack-item"><span class="name">Files</span><span class="ver">7</span></div>
+        <div class="stack-item"><span class="name">Persistence</span><span class="ver">none</span></div>
+      </div>
+
+      <div class="stack-card">
+        <div class="label">Tooling</div>
+        <div class="stack-item"><span class="name">Package mgr (py)</span><span class="ver">uv</span></div>
+        <div class="stack-item"><span class="name">Package mgr (js)</span><span class="ver">npm</span></div>
+        <div class="stack-item"><span class="name">Tests</span><span class="ver">pytest, httpx</span></div>
+        <div class="stack-item"><span class="name">i18n</span><span class="ver">en / ja</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ARCHITECTURE -->
+  <section>
+    <h2>System Architecture</h2>
+    <div class="arch">
+
+      <div class="arch-row">
+        <div class="arch-tier tier-browser">
+          <div class="tier-label">Tier 1 — Client</div>
+          <div class="tier-name">Browser</div>
+          <div class="tier-meta">User interaction · Chart rendering (custom SVG) · 7 views via Vue Router</div>
+          <div class="pill-row">
+            <span class="pill">Dashboard</span>
+            <span class="pill">Inventory</span>
+            <span class="pill">Orders</span>
+            <span class="pill">Demand</span>
+            <span class="pill">Spending</span>
+            <span class="pill">Reports</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="arrow">↓<div><span class="label">HTTP · localhost:3000</span></div></div>
+
+      <div class="arch-row">
+        <div class="arch-tier tier-frontend">
+          <div class="tier-label">Tier 2 — Frontend SPA · Vite dev server</div>
+          <div class="tier-name">Vue 3 Composition API</div>
+          <div class="tier-meta">Composables (<code>useFilters</code>, <code>useAuth</code>, <code>useI18n</code>) · No Vuex / Pinia — plain refs · Axios client in <code>src/api.js</code></div>
+          <div class="pill-row">
+            <span class="pill">views/*.vue</span>
+            <span class="pill">components/*.vue</span>
+            <span class="pill">composables/</span>
+            <span class="pill">api.js</span>
+            <span class="pill">locales/ (en, ja)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="arrow">↓<div><span class="label">REST · CORS allow-all · /api/*</span></div></div>
+
+      <div class="arch-row">
+        <div class="arch-tier tier-backend">
+          <div class="tier-label">Tier 3 — API · Uvicorn ASGI</div>
+          <div class="tier-name">FastAPI service</div>
+          <div class="tier-meta"><code>server/main.py</code> · Pydantic response models · <code>apply_filters()</code> + <code>filter_by_month()</code> helpers · OpenAPI docs at <code>/docs</code></div>
+          <div class="pill-row">
+            <span class="pill">/api/inventory</span>
+            <span class="pill">/api/orders</span>
+            <span class="pill">/api/dashboard/summary</span>
+            <span class="pill">/api/spending/*</span>
+            <span class="pill">/api/reports/*</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="arrow">↓<div><span class="label">module load · once at startup</span></div></div>
+
+      <div class="arch-row">
+        <div class="arch-tier tier-data">
+          <div class="tier-label">Tier 4 — Mock data</div>
+          <div class="tier-name">JSON fixtures (server/data/)</div>
+          <div class="tier-meta">Loaded by <code>mock_data.py</code> at process start · Filtered in Python on every request · Not persisted</div>
+          <div class="pill-row">
+            <span class="pill">inventory.json</span>
+            <span class="pill">orders.json</span>
+            <span class="pill">demand_forecasts.json</span>
+            <span class="pill">backlog_items.json</span>
+            <span class="pill">purchase_orders.json</span>
+            <span class="pill">spending.json</span>
+            <span class="pill">transactions.json</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- DATA FLOW -->
+  <section>
+    <h2>Data Flow — Dashboard Request</h2>
+    <div class="flow">
+
+      <div class="flow-step">
+        <h3>User navigates to <code>/</code></h3>
+        <p><code>main.js</code> mounts <code>App.vue</code>; Vue Router resolves the root path to <code>views/Dashboard.vue</code>.</p>
+      </div>
+
+      <div class="flow-step">
+        <h3>Dashboard reads current filters</h3>
+        <p>The view calls <code>useFilters().getCurrentFilters()</code> — a singleton composable holding four refs (period, location, category, status) — and maps them to API param names (<code>month</code>, <code>warehouse</code>, <code>category</code>, <code>status</code>).</p>
+      </div>
+
+      <div class="flow-step">
+        <h3>API call via <code>src/api.js</code></h3>
+        <p>Axios issues <code>GET http://localhost:8001/api/dashboard/summary?warehouse=…&amp;category=…&amp;status=…&amp;month=…</code>. The same client wraps every endpoint as a function — UI code never touches URLs directly.</p>
+      </div>
+
+      <div class="flow-step">
+        <h3>FastAPI handler runs</h3>
+        <p><code>server/main.py</code> applies <code>apply_filters()</code> to <code>inventory</code> and <code>orders</code>, then <code>filter_by_month()</code> for time-period (supports both <code>2025-01</code> and <code>Q1-2025</code>). Aggregates inventory value, low-stock count, pending orders, backlog count, and order revenue.</p>
+      </div>
+
+      <div class="flow-step">
+        <h3>Pydantic validates &amp; serializes</h3>
+        <p>Response is shaped through Pydantic models (<code>InventoryItem</code>, <code>Order</code>, …) and returned as JSON.</p>
+      </div>
+
+      <div class="flow-step">
+        <h3>Dashboard renders</h3>
+        <p>Raw payload lands in <code>ref</code>s; KPI cards and SVG charts are <code>computed</code> derivations. Changing any filter in <code>FilterBar.vue</code> mutates the shared refs, every view watching them re-fetches automatically.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ENDPOINTS -->
+  <section>
+    <h2>API Surface</h2>
+    <div class="endpoints">
+      <table>
+        <thead>
+          <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="method">GET</td><td class="path">/api/inventory</td><td class="desc">All SKUs. Filters: warehouse, category</td></tr>
+          <tr><td class="method">GET</td><td class="path">/api/inventory/{item_id}</td><td class="desc">Single inventory item</td></tr>
+          <tr><td class="method">GET</td><td class="path">/api/orders</td><td class="desc">Orders. Filters: warehouse, category, status, month</td></tr>
+          <tr><td class="method">GET</td><td class="path">/api/orders/{order_id}</td><td class="desc">Single order</td></tr>
+          <tr><td class="method">GET</td><td class="path">/api/demand</td><td class="desc">Demand forecasts with trend indicators</td></tr>
+          <tr><td class="method">GET</td><td class="path">/api/backlog</td><td class="desc">Unfulfilled items, with purchase-order flags</td></tr>
+          <tr><td class="method">GET</td><td class="path">/api/dashboard/summary</td><td class="desc">KPIs aggregated across inventory + orders + backlog</td></tr>
+          <tr><td class="method">GET</td><td class="path">/api/spending/summary</td><td class="desc">Totals: procurement, operational, labor, overhead</td></tr>
+          <tr><td class="method">GET</td><td class="path">/api/spending/monthly</td><td class="desc">Month-by-month spend breakdown</td></tr>
+          <tr><td class="method">GET</td><td class="path">/api/spending/categories</td><td class="desc">Spend grouped by category</td></tr>
+          <tr><td class="method">GET</td><td class="path">/api/spending/transactions</td><td class="desc">Recent transaction list</td></tr>
+          <tr><td class="method">GET</td><td class="path">/api/reports/quarterly</td><td class="desc">Quarterly orders, revenue, fulfillment rate</td></tr>
+          <tr><td class="method">GET</td><td class="path">/api/reports/monthly-trends</td><td class="desc">Month-over-month trend data</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- PATTERNS -->
+  <section>
+    <h2>Notable Patterns</h2>
+    <div class="pattern-grid">
+
+      <div class="pattern">
+        <h3>Singleton filter composable</h3>
+        <p>Four refs (period, location, category, status) live inside <code>useFilters()</code> at module scope. Every view that imports it sees the same instance, so <code>FilterBar.vue</code> changes propagate without prop drilling or a store.</p>
+      </div>
+
+      <div class="pattern">
+        <h3>Server-side filtering only</h3>
+        <p>The Vue layer does not filter lists itself — it forwards filter values as query params and re-renders whatever the API returns. Keeps the client thin and the API behavior testable.</p>
+      </div>
+
+      <div class="pattern">
+        <h3>JSON fixtures as the database</h3>
+        <p><code>mock_data.py</code> loads seven JSON files once at startup; everything runs against in-memory dicts. Restarting the server discards any runtime mutations (e.g. created purchase orders).</p>
+      </div>
+
+      <div class="pattern">
+        <h3>Custom SVG charts</h3>
+        <p>No charting library. Each view renders its charts as inline SVG built from <code>computed()</code> data — predictable, dependency-free, easy to style.</p>
+      </div>
+
+      <div class="pattern">
+        <h3>Pydantic at the boundary</h3>
+        <p>Every endpoint declares a <code>response_model</code>. The JSON shape and the typed contract live in the same file (<code>server/main.py</code>), so schema drift fails fast.</p>
+      </div>
+
+      <div class="pattern">
+        <h3>Centralised API client</h3>
+        <p><code>client/src/api.js</code> maps 1:1 to the FastAPI surface. UI code calls <code>api.getDashboardSummary(filters)</code> rather than constructing URLs — one place to change base URL, auth, or error handling.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>
+    <span>Generated from repository inspection · branch <code style="font-family:ui-monospace,Menlo,monospace">new_features</code></span>
+    <span><a href="http://localhost:3000">App ›</a> &nbsp; <a href="http://localhost:8001/docs">API docs ›</a></span>
+  </footer>
+
+</div>
+</body>
+</html>

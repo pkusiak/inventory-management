@@ -74,6 +74,55 @@
           </table>
         </div>
       </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Submitted Restocking Orders ({{ restockOrders.length }})</h3>
+        </div>
+        <div v-if="restockOrders.length === 0" class="restock-empty">
+          No restocking orders submitted yet.
+        </div>
+        <div v-else class="table-container">
+          <table class="restock-orders-table">
+            <thead>
+              <tr>
+                <th class="col-order-id">Order ID</th>
+                <th class="col-submitted">Submitted At</th>
+                <th class="col-items">Items</th>
+                <th class="col-cost">Total Cost</th>
+                <th class="col-lead">Lead Time</th>
+                <th class="col-delivery">Expected Delivery</th>
+                <th class="col-status">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="order in restockOrders" :key="order.id">
+                <td class="col-order-id"><strong>{{ order.id }}</strong></td>
+                <td class="col-submitted">{{ formatDate(order.created_at) }}</td>
+                <td class="col-items">
+                  <details class="items-details">
+                    <summary class="items-summary">
+                      {{ order.items.length }} item{{ order.items.length !== 1 ? 's' : '' }}
+                    </summary>
+                    <div class="items-dropdown">
+                      <div v-for="item in order.items" :key="item.sku" class="item-entry">
+                        <span class="item-name">{{ item.quantity }} x {{ item.name }}</span>
+                        <span class="item-meta">{{ item.sku }}</span>
+                      </div>
+                    </div>
+                  </details>
+                </td>
+                <td class="col-cost"><strong>{{ currencySymbol }}{{ order.total_cost.toLocaleString() }}</strong></td>
+                <td class="col-lead">{{ order.max_lead_time_days }} days</td>
+                <td class="col-delivery">{{ formatDate(order.expected_delivery) }}</td>
+                <td class="col-status">
+                  <span class="badge info">{{ order.status }}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -95,6 +144,7 @@ export default {
     const loading = ref(true)
     const error = ref(null)
     const orders = ref([])
+    const restockOrders = ref([])
 
     // Use shared filters
     const {
@@ -124,9 +174,18 @@ export default {
       }
     }
 
+    const loadRestockOrders = async () => {
+      try {
+        restockOrders.value = await api.getRestockOrders()
+      } catch (err) {
+        console.error('Failed to load restock orders:', err)
+      }
+    }
+
     // Watch for filter changes and reload data
     watch([selectedPeriod, selectedLocation, selectedCategory, selectedStatus], () => {
       loadOrders()
+      loadRestockOrders()
     })
 
     const getOrdersByStatus = (status) => {
@@ -153,7 +212,7 @@ export default {
       })
     }
 
-    onMounted(loadOrders)
+    onMounted(() => Promise.all([loadOrders(), loadRestockOrders()]))
 
     return {
       t,
@@ -165,7 +224,8 @@ export default {
       formatDate,
       currencySymbol,
       translateProductName,
-      translateCustomerName
+      translateCustomerName,
+      restockOrders
     }
   }
 }
@@ -275,5 +335,45 @@ export default {
 .item-meta {
   font-size: 0.813rem;
   color: #64748b;
+}
+
+/* Restock orders table */
+.restock-orders-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.restock-orders-table .col-order-id {
+  width: 160px;
+}
+
+.restock-orders-table .col-submitted {
+  width: 150px;
+}
+
+.restock-orders-table .col-items {
+  width: 160px;
+}
+
+.restock-orders-table .col-cost {
+  width: 120px;
+}
+
+.restock-orders-table .col-lead {
+  width: 110px;
+}
+
+.restock-orders-table .col-delivery {
+  width: 150px;
+}
+
+.restock-orders-table .col-status {
+  width: 120px;
+}
+
+.restock-empty {
+  padding: 2rem 0.75rem;
+  color: #64748b;
+  font-size: 0.938rem;
 }
 </style>
